@@ -1,0 +1,46 @@
+{% extends "NyaaaStore/base-adm.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "NyaaaStore/css/tabla.css" %}">
+{% endblock css %}
+
+{% block Contenido-adm %}
+
+<main>
+    <!-- Codigo para la tabla que muestra los usuarios -->
+    <div class="tabla">
+        <div class="titulo">
+            <h1>Registo de Series</h1>
+            <a href="{% url "agregar_serie" %}" role="button" class="btn">+Agregar Serie</a>
+        </div>
+        <table>
+            <caption>
+                Series
+                <span class="table-row-count"></span>
+            </caption>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NOMBRE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in entity %}
+                <tr>
+                    <td>{{s.id}}</td>
+                    <td>{{s.nombre}}</td>
+                    <td><a href="{% url "eliminar_cliente" s.id %}" role="button" class="btn">Eliminar</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <hr>
+        <div>
+            {% include "NyaaaStore/paginator.html" %}
+        </div>
+    </div>
+    <!-- Codigo para la tabla que muestra los usuarios -->
+</main>
+
+{% endblock Contenido-adm %}

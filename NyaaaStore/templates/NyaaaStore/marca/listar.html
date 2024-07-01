@@ -1,0 +1,46 @@
+{% extends "NyaaaStore/base-adm.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "NyaaaStore/css/tabla.css" %}">
+{% endblock css %}
+
+{% block Contenido-adm %}
+
+<main>
+    <!-- Codigo para la tabla que muestra los usuarios -->
+    <div class="tabla">
+        <div class="titulo">
+            <h1>Registo de Marca</h1>
+            <a href="{% url "agregar_marca" %}" role="button" class="btn">+Agregar Marca</a>
+        </div>
+        <table>
+            <caption>
+                Marcas
+                <span class="table-row-count"></span>
+            </caption>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NOMBRE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in entity %}
+                <tr>
+                    <td>{{m.id}}</td>
+                    <td>{{m.nombre}}</td>
+                    <td><a href="{% url "eliminar_marca" m.id %}" role="button" class="btn">Eliminar</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <hr>
+        <div>
+            {% include "NyaaaStore/paginator.html" %}
+        </div>
+    </div>
+    <!-- Codigo para la tabla que muestra los usuarios -->
+</main>
+
+{% endblock Contenido-adm %}

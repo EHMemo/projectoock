@@ -1,0 +1,89 @@
+{% extends "NyaaaStore/base-adm.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "NyaaaStore/css/tabla.css" %}">
+{% endblock css %}
+
+{% block js %}
+
+    <script>
+        function eliminar_producto(id) {
+            Swal.fire({
+                "title":"Estas seguro?",
+                "text":"esta accion no tiene retorno"
+                "icon":"question",
+                "showCancelButton":true,
+                "cancelButtonText":"No, Cancelar",
+                "confirmButtonText":"ERAI"
+                "reverseButtons":true,
+                "confirmButtonColor":"#dc3545"
+            })
+            .then(function(result) {
+                if(result.isConfirmed) {
+                    window.location.href = "/eliminar_producto/"+id+"/"
+                }
+            })
+        }
+    </script>
+
+{% endblock js %}
+
+
+{% block Contenido-adm %}
+
+<main>
+    <!-- Codigo para la tabla que muestra los usuarios -->
+    <div class="tabla">
+        <div class="titulo">
+            <h1>Registo de productos</h1>
+            {% if perms.NyaaaStore.add_cliente %}
+            <a href="{% url "agregar_producto" %}" role="button" class="btn">+Agregar Producto</a>
+            {% endif %}
+        </div>
+        <table>
+            <caption>
+                Productos
+                <span class="table-row-count"></span>
+            </caption>
+            <thead>
+                <tr>
+                    <th>IMAGEN</th>
+                    <th>ID</th>
+                    <th>PRECIO</th>
+                    <th>NOMBRE</th>
+                    <th>ANIME</th>
+                    <th>MARCA</th>
+                    <th>SERIE</th>
+                    <th>TIPO</th>
+                    <th>STOCK</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in entity %}
+                <tr>
+                    <td><img src="{{p.foto.url}}" alt="foto" height="100"></td>
+                    <td>{{p.id}}</td>
+                    <td>{{p.precio}}</td>
+                    <td>{{p.nombre}}</td>
+                    <td>{{p.anime}}</td>
+                    <td>{{p.marca}}</td>
+                    <td>{{p.serie}}</td>
+                    <td>{{p.tp_producto}}</td>
+                    <td>{{p.stock}}</td>
+                    {% if perms.NyaaaStore.view_cliente %}
+                    <td><a href="{% url "detalle_producto" p.id %}" role="button" class="btn">Ver productos</a></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <hr>
+        <div>
+            {% include "NyaaaStore/paginator.html" %}
+        </div>
+    </div>
+    <!-- Codigo para la tabla que muestra los usuarios -->
+</main>
+
+{% endblock Contenido-adm %}
