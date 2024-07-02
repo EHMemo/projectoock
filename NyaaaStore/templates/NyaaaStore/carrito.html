@@ -1,163 +1,90 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- templates/cart/cart_detail.html -->
+{% extends "NyaaaStore/base.html" %}
+{%load static%}
+{% load crispy_forms_tags %}
+{% block Contenido %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="../css/carrito.css">
-    <!-- Latest compiled and minified CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<title>Carrito</title>
 
-    <!-- Latest compiled JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/9ecdaac0bf.js" crossorigin="anonymous"></script>
-</head>
+<div class="container mt-5">
+    <h2>Tu carrito de compras</h2>
 
-<body>
-    <!-- cart + summary -->
-    <section class="bg-light my-5">
-        <div class="container">
-            <div class="row">
-                <!-- cart -->
-                <div class="col-lg-9">
-                    <div class="card border shadow-0">
-                        <div class="m-4">
-                            <h4 class="card-title mb-4">Your shopping cart</h4>
-                            {% if request.session.carrito.items %}
-                            {% for key, value in request.session.carrito.items %}
-                            <div class="row gy-3 mb-4">
-                                <div class="col-lg-5">
-                                    <div class="me-lg-5">
-                                        <div class="d-flex">
-                                            <img src="#" class="border rounded me-3"
-                                                style="width: 96px; height: 96px;" />
-                                            <div class="">
-                                                <a href="#" class="nav-link">{{ value.nombre }}</a>
-                                                <p class="text-muted">Yellow, Jeans</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div
-                                    class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
-                                    <div class="">
-                                        <a href="{% url "add" %}" class="badge btn btn-dark badge-dark">+</a>
-                                        <a href="{% url "del" %}" class="badge btn btn-dark badge-dark">-</a>
-                                    </div>
-                                    <div class="">
-                                        <text class="h6">${{ value.acumulado }}</text> <br />
-                                        <small class="text-muted text-nowrap"> ${{ value.precio }} / por item </small>
-                                    </div>
-                                </div>
-                                <div
-                                    class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
-                                    <div class="float-md-end">
-                                        <a href="#" class="btn btn-light border text-danger icon-hover-danger">
-                                            Remove</a>
-                                    </div>
-                                </div>
-                            </div>
+    <div class="table-responsive my-3">
+        <a href="{% url "home" %}" class="btn btn-dark my-3">Seguir comprando...</a>
+        <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="bg-dark text-white">Imagen</th>
+                <th class="bg-dark text-white">Producto</th>
+                <th class="bg-dark text-white">Cantidad</th>
+                <th class="bg-dark text-white">Stock disponible</th>
+                <th class="bg-dark text-white">Precio por juego</th>
+                <th class="bg-dark text-white">Subtotal</th>
+                <th class="bg-dark text-white">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart.items.all %}
+            <tr>
+                <td class="text-center"> <img src="{{ item.producto.foto.url }}" style="width: 65px;" alt="juego-imagen"></td>
+                <td>{{ item.producto.nombre }}</td>
+                <td>
+                    <form method="post" action="{% url 'update_cart_item' item.id %}">
+                        {% csrf_token %}
+                        <input type="number" name="cantidad" value="{{ item.cantidad }}" min="1">
+                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                    </form>
+                </td>
+                <td>{{ item.producto.stock }}</td>
+                <td>${{ item.precio_por_item }}</td>
+                <td>${{ item.subtotal }}</td>
+                <td>
+                        <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h3 class="mt-5">Total: $ {{ cart.total }}</h3>
+    <button type="button" class="btn btn-success mt-1" data-bs-toggle="modal" data-bs-target="#detalleCompraModal">
+        Pagar $$
+    </button>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="detalleCompraModal" tabindex="-1" aria-labelledby="detalleCompraModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detalleCompraModalLabel">Confirmar compra</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart.items.all %}
+                            <tr>
+                                <td>{{ item.producto.nombre }}</td>
+                                <td>{{ item.cantidad }}</td>
+                                <td>${{ item.subtotal }}</td>
+                            </tr>
                             {% endfor %}
-                            {% else %}
-                            <div class="row gy-3 mb-4">
-                                <div class="alert alert-danger text-center"> Sin Productos </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                        <div class="border-top pt-4 mx-4 mb-4">
-                            <p><i class="fas fa-truck text-muted fa-lg"></i> Free Delivery within 1-2 weeks</p>
-                            <p class="text-muted">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                                exercitation ullamco laboris nisi ut
-                                aliquip
-                            </p>
-                        </div>
-                    </div>
+                        </tbody>
+                    </table>
+                    <h3 class="mt-3">Total: $ {{ cart.total }}</h3>
                 </div>
-                <!-- cart -->
-                <!-- summary -->
-                <div class="col-lg-3">
-                    <div class="card mb-3 border shadow-0">
-                        <div class="card-body">
-                            <form>
-                                <div class="form-group">
-                                    <label class="form-label">Have coupon?</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control border" name=""
-                                            placeholder="Coupon code" />
-                                        <button class="btn btn-light border">Apply</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="card shadow-0 border">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <p class="mb-2">Total price:</p>
-                                <p class="mb-2">$329.00</p>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <p class="mb-2">Discount:</p>
-                                <p class="mb-2 text-success">-$60.00</p>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <p class="mb-2">TAX:</p>
-                                <p class="mb-2">$14.00</p>
-                            </div>
-                            <hr />
-                            <div class="d-flex justify-content-between">
-                                <p class="mb-2">Total price:</p>
-                                <p class="mb-2 fw-bold">$283.00</p>
-                            </div>
-
-                            <div class="mt-3">
-                                <a href="#" class="btn btn-success w-100 shadow-0 mb-2"> Make Purchase </a>
-                                <a href="#" class="btn btn-light w-100 border mt-2"> Back to shop </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- summary -->
-            </div>
-        </div>
-    </section>
-    <!-- cart + summary -->
-    <section>
-        <div class="container my-5">
-            <header class="mb-4">
-                <h3>Recommended items</h3>
-            </header>
-
-            <div class="row">
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card px-4 border shadow-0 mb-4 mb-lg-0">
-                        <div class="mask px-2" style="height: 50px;">
-                            <div class="d-flex justify-content-between">
-                                <h6><span class="badge bg-danger pt-1 mt-3 ms-2">New</span></h6>
-                            </div>
-                        </div>
-                        <a href="#" class="">
-                            <img src="#" class="card-img-top rounded-2" />
-                        </a>
-                        <div class="card-body d-flex flex-column pt-3 border-top">
-                            <a href="#" class="nav-link">Gaming Headset with Mic</a>
-                            <div class="price-wrap mb-2">
-                                <strong class="">$18.95</strong>
-                                <del class="">$24.99</del>
-                            </div>
-                            <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                <a href="#" class="btn btn-outline-primary w-100">Add to cart</a>
-                            </div>
-                        </div>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Volver</button>
+                    <a href="{% url 'process_payment' %}" class="btn btn-success">Confirmar compra</a>
                 </div>
             </div>
         </div>
-    </section>
-    <!-- Recommended -->
-</body>
+    </div>
 
-</html>
+{% endblock Contenido %}

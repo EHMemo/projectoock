@@ -19,7 +19,7 @@
         <h2>{{ p.nombre }}</h2>
         <p>${{ p.precio }}</p>
         <p>ID: {{ p.id }}</p>
-        <a href="{% url "add" p.id %}">
+        <a href="{% url 'add_to_cart' p.id %}">
         <button class="product-button">Agregar al carro</button>
         </a>
     </a>

@@ -32,22 +32,26 @@
                 </tr>
             </thead>
             <tbody>
-                {% for P in perfiles %}
+                {% for u in entity %}
                 <tr>
-                    <td>{{p.usuario.id}}</td>
-                    <td>{{p.usuario.username}}</td>
-                    <td>{{p.usuario.first_name}}</td>
-                    <td>{{p.usuario.last_name}}</td>
-                    <td>{{p.usuario.email}}</td>
-                    <td>+569 {{p.fono}}</td>
-                    <td>{{p.city}}</td>
-                    <td>{{p.direccion}}</td>
-                    <td><a href="{% url "detalle_cliente" p.usuario.id %}" role="button" class="btn">Ver cliente</a></td>
-                    <td><a href="{% url "eliminar_cliente" p.usuario.id %}" role="button" class="btn">Eliminar</a></td>
+                    <td>{{u.id}}</td>
+                    <td>{{u.username}}</td>
+                    <td>{{u.first_name}}</td>
+                    <td>{{u.last_name}}</td>
+                    <td>{{u.email}}</td>
+                    <td>{{u.fono}}</td>
+                    <td>{{u.city}}</td>
+                    <td>{{u.direccion}}</td>
+                    <td><a href="{% url "detalle_cliente" u.id %}" role="button" class="btn">Ver cliente</a></td>
+                    <td><a href="{% url "eliminar_cliente" u.id %}" role="button" class="btn btn-danger text-light">Eliminar</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <hr>
+        <div>
+            {% include "NyaaaStore/paginator.html" %}
+        </div>
     </div>
     <!-- Codigo para la tabla que muestra los usuarios -->
 </main>

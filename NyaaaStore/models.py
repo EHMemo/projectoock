@@ -49,3 +49,41 @@ class UserPerfil(models.Model):
     fono=models.CharField(max_length=9, null=False)
     city=models.CharField(max_length=15, choices=CIUDAD, null=False)
     direccion=models.CharField(max_length=200, null=False)
+
+# MODELO CARRITO 
+
+class CartItem(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, verbose_name="Producto")
+    cantidad = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
+    precio_por_item = models.PositiveIntegerField(validators=[MinValueValidator(0)])
+
+    def subtotal(self):
+        return self.cantidad * self.precio_por_item
+
+    def __str__(self):
+        return f"{self.juego} - {self.cantidad} x {self.precio_por_item}"
+
+class Cart(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Usuario", related_name="carts")
+    items = models.ManyToManyField(CartItem, verbose_name="Ítems", related_name="carts")
+
+    def total(self):
+        return sum([item.subtotal() for item in self.items.all()])
+
+    def __str__(self):
+        return f"Cart for {self.usuario}"
+
+# Ventas
+class Venta(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Usuario")
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, verbose_name="Producto")
+    cantidad = models.PositiveIntegerField()
+    total_venta = models.PositiveIntegerField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    estado = models.CharField(max_length=30, choices=ESTADO, default='EN PREPARACIÓN')
+
+    def total_venta(self):
+        return self.cantidad * self.producto.precio
+
+    def __str__(self):
+        return f"Venta {self.id} - {self.producto.nombre} - {self.cantidad} unidades"

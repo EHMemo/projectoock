@@ -11,10 +11,9 @@
                     <div class="card-body text-center">
                         <h5 class="my-3">{{ user.username }}</h5>
                         <div class="d-flex justify-content-center mb-2">
+                            <a href="{% url "editarperfil" %}"></a>
                             <button type="button" data-mdb-button-init data-mdb-ripple-init
                                 class="btn btn-primary">Editar Perfil</button>
-                            <button type="button" data-mdb-button-init data-mdb-ripple-init
-                                class="btn btn-outline-primary ms-1">Historial de compras</button>
                         </div>
                     </div>
                 </div>
@@ -39,13 +38,13 @@
                                 <p class="text-muted mb-0">{{user.email}}</p>
                             </div>
                         </div>
-                        <hr>
+                        <hr> 
                         <div class="row">
                             <div class="col-sm-3">
-                                <p class="mb-0">Phone</p>
+                                <p class="mb-0">Telefono</p>
                             </div>
                             <div class="col-sm-9">
-                                <p class="text-muted mb-0">(097) 234-5678</p>
+                                <p class="text-muted mb-0">#</p>
                             </div>
                         </div>
                         <hr>
@@ -54,7 +53,7 @@
                                 <p class="mb-0">Ciudad</p>
                             </div>
                             <div class="col-sm-9">
-                                <p class="text-muted mb-0">(098) 765-4321</p>
+                                <p class="text-muted mb-0">#</p>
                             </div>
                         </div>
                         <hr>
@@ -63,9 +62,40 @@
                                 <p class="mb-0">Direccion</p>
                             </div>
                             <div class="col-sm-9">
-                                <p class="text-muted mb-0">Bay Area, San Francisco, CA</p>
+                                <p class="text-muted mb-0">#</p>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-15">
+                <div class="table-responsive my-3">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="bg-dark text-white">IMAGEN</th>
+                                <th class="bg-dark text-white">PRODUCTO</th>
+                                <th class="bg-dark text-white">PRECIO</th>
+                                <th class="bg-dark text-white">CANTIDAD</th>
+                                <th class="bg-dark text-white">ESTADO</th>
+                                <th class="bg-dark text-white">FECHA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for venta in historial_compras %}
+                                <tr>
+                                    <td class="text-center"> <img src="{{ venta.producto.foto.url }}" style="width: 65px;" alt="producto-imagen"></td>
+                                    <td>{{ venta.producto.nombre }}</td>
+                                    <td>{{ venta.total_venta }}</td>
+                                    <td>{{ venta.cantidad }}</td>
+                                    <td>{{ venta.estado }}</td>
+                                    <td>{{ venta.fecha }}</td>
+                                </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                    <div>
+                        {% include "NyaaaStore/paginator.html" %}
                     </div>
                 </div>
             </div>

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Producto,UserPerfil,Anime,Marca,Serie
+from .models import Producto,UserPerfil,Anime,Marca,Serie,Venta
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.forms import ValidationError
@@ -27,7 +27,7 @@ class UserForm(UserCreationForm):
 
     class Meta:
         model=User
-        fields=['username','email','password1','password2']
+        fields=['username','first_name','last_name','email','password1','password2']
 
 class UserPerfilForm(forms.ModelForm):
 
@@ -61,3 +61,9 @@ class SerieForm(forms.ModelForm):
     class Meta:
         model = Serie
         fields = '__all__'
+
+# Venta
+class EstadoVentaForm(forms.ModelForm):
+    class Meta:
+        model = Venta
+        fields = ['estado']

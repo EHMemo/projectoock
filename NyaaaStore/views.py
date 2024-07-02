@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
-from .cart import Cart
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.http import Http404
@@ -10,6 +9,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
 from os import remove, path
 from django.conf import settings
+from django.utils import timezone
+from django.db.models import Q
 
 # Create your views here.
 
@@ -64,29 +65,112 @@ def exit(request):
     
     return redirect('home')
 
+@login_required
 def carrito(request):
-    return render(request, 'NyaaaStore/carrito.html')
+    cart, created = Cart.objects.get_or_create(usuario=request.user)
+    return render(request, 'NyaaaStore/carrito.html', {'cart': cart})
 
 @login_required
-def perfil(request, id):
+def perfil(request, username):
 
-    usuario=get_object_or_404(User, id=id)
+    usuario=get_object_or_404(User, username=username)
+    historial_compras = Venta.objects.filter(usuario=usuario).order_by('-fecha')
 
     datos={
-        'usuario':usuario
+        'usuario':usuario,
+        'historial_compras': historial_compras,
     }
 
     return render(request, 'NyaaaStore/perfil.html', datos)
 
+def editar_perfil(request):
+
+    return render(request, 'NyaaaStore/editarperfil.html')
+
 # FUNCIONES CARRITO
 
+@login_required
+def add_to_cart(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    cart, created = Cart.objects.get_or_create(usuario=request.user)
 
+    cart_item, created = CartItem.objects.get_or_create(producto=producto, precio_por_item=producto.precio)
+    if not created:
+        cart_item.cantidad += 1
+        cart_item.save()
+
+    cart.items.add(cart_item)
+    messages.success(request, f'{producto.nombre} fue añadido a tu carrito.')
+
+    return redirect('carrito')
+
+@login_required
+def update_cart_item(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id)
+    if request.method == 'POST':
+        cantidad = int(request.POST.get('cantidad', 1))
+        cart_item.cantidad = cantidad
+        cart_item.save()
+        messages.success(request, 'La cantidad fue actualizada.')
+    return redirect('carrito')
+
+@login_required
+def remove_from_cart(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id)
+    cart_item.delete()
+    messages.success(request, 'El ítem fue eliminado del carrito.')
+    return redirect('carrito')
+
+@login_required
+def process_payment(request):
+    cart, created = Cart.objects.get_or_create(usuario=request.user)
+    if not cart.items.exists():
+        messages.error(request, 'No tienes artículos en tu carrito.')
+        return redirect('carrito')
+
+    for item in cart.items.all():
+        producto = item.producto
+        if item.cantidad > producto.stock:
+            messages.error(request, f'No hay suficiente stock para {producto.nombre}.')
+            return redirect('carrito')
+        
+        Venta.objects.create(
+                usuario=request.user,
+                producto=producto,
+                cantidad=item.cantidad,
+                estado='EN PREPARACIÓN',
+                fecha=timezone.now()
+            )
+        
+    for item in cart.items.all():
+        producto = item.producto
+        producto.stock -= item.cantidad
+        producto.save()
+
+    cart.items.clear()
+    
+    messages.success(request, 'Pago realizado con éxito. Gracias por tu compra.')
+    return redirect('carrito')
 
 # FIN FUNCIONES CARRITO
 # FIN VIEWS PAGINA BASE
 
 # VIEWS VISTA ADMIN
-
+@permission_required('NyaaaStore.view_anime')
+@permission_required('NyaaaStore.add_anime')
+@permission_required('NyaaaStore.view_marca')
+@permission_required('NyaaaStore.add_marca')
+@permission_required('NyaaaStore.view_anime')
+@permission_required('NyaaaStore.add_anime')
+@permission_required('NyaaaStore.add_producto')
+@permission_required('NyaaaStore.view_producto')
+@permission_required('NyaaaStore.change_producto')
+@permission_required('NyaaaStore.delete_producto')
+@permission_required('NyaaaStore.view_user')
+@permission_required('NyaaaStore.change_user')
+@permission_required('NyaaaStore.delete_user')
+@permission_required('NyaaaStore.add_user')
+@login_required
 def home_adm(request):
 
     return render(request, 'NyaaaStore/vistaadm/home-adm.html')
@@ -308,26 +392,18 @@ def eliminar_producto(request,id):
 @permission_required('NyaaaStore.view_user')
 def listar_cliente(request):
 
-    query=request.GET.get('q')
+    usuarios = User.objects.exclude(is_superuser=True)
+    page = request.GET.get('page', 1)
 
-    if query:
-        perfiles=UserPerfil.object.filter(
-            Q(usuario__id__icontains=query) |
-            Q(usuario__username__icontains=query) |
-            Q(usuario__first_name__icontains=query) |
-            Q(usuario__last_name__icontains=query) |
-            Q(usuario__email__icontains=query) |
-            Q(fono__id__icontains=query) |
-            Q(city__id__icontains=query) |
-            Q(direccion__id__icontains=query)
-        )
-        if not perfiles.exists():
-            perfiles=UserPerfil.objects.all()
-    else:
-        perfiles=UserPerfil.objects.all()
+    try:
+        paginator = Paginator(usuarios, 7)
+        usuarios = paginator.page(page)
+    except:
+        raise Http404
 
-    datos={
-        "perfiles":perfiles
+    datos = {
+        'entity': usuarios,
+        'paginator': paginator
     }
     return render(request, 'NyaaaStore/cliente/listar.html', datos)
 
