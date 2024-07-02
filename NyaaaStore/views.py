@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
-
+from .forms import *
+from .cart import Cart
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.http import Http404
@@ -18,7 +19,12 @@ def home(request):
     return render(request, 'NyaaaStore/home.html')
 
 def cat_figuras(request):
-    return render(request, 'NyaaaStore/catalogo_figuras.html')
+    
+    productos=Producto.objects.all() #queryset
+    datos = {
+        'productos' : productos
+    }
+    return render(request, 'NyaaaStore/catalogo_figuras.html', datos)
 
 def cat_poleras(request):
     return render(request, 'NyaaaStore/catalogo_poleras.html')
@@ -58,7 +64,8 @@ def exit(request):
     
     return redirect('home')
 
-
+def carrito(request):
+    return render(request, 'NyaaaStore/carrito.html')
 
 @login_required
 def perfil(request, id):
@@ -71,32 +78,11 @@ def perfil(request, id):
 
     return render(request, 'NyaaaStore/perfil.html', datos)
 
-# CARRITO
+# FUNCIONES CARRITO
 
-def agregar(request, producto_id):
-    carrito = Carrito(request)
-    producto = Producto.objects.get(id=producto_id)
-    carrito.agregar(producto)
-    return redirect(request, 'NyaaaStore/home.html')
 
-def elimiar(request, producto_id):
-    carrito = Carrito(request)
-    producto = Producto.objects.get(id=producto_id)
-    carrito.eliminar(producto)
-    return redirect(request, 'NyaaaStore/home.html')
 
-def restar(request, producto_id):
-    carrito = Carrito(request)
-    producto = Producto.objects.get(id=producto_id)
-    carrito.restar(producto)
-    return redirect(request, 'NyaaaStore/home.html')
-
-def limpiar(request):
-    carrito = Carrito(request)
-    carrito.limpiar()
-    return redirect(request, 'NyaaaStore/home.html')
-
-# FIN CARRITO
+# FIN FUNCIONES CARRITO
 # FIN VIEWS PAGINA BASE
 
 # VIEWS VISTA ADMIN
@@ -165,7 +151,7 @@ def listar_marca(request):
         'paginator':paginator
     }
     
-    return render(request, 'NyaaaStore/marca/listar.html')
+    return render(request, 'NyaaaStore/marca/listar.html', datos)
 
 @permission_required('NyaaaStore.add_marca')
 def agregar_marca(request):

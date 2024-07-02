@@ -23,6 +23,7 @@
                 <tr>
                     <th>ID</th>
                     <th>NOMBRE</th>
+                    <th>MARCA</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,7 +31,8 @@
                 <tr>
                     <td>{{s.id}}</td>
                     <td>{{s.nombre}}</td>
-                    <td><a href="{% url "eliminar_cliente" s.id %}" role="button" class="btn">Eliminar</a></td>
+                    <td>{{s.marca}}</td>
+                    <td><a href="#" role="button" class="btn">Eliminar</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

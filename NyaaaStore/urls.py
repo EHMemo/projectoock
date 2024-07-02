@@ -5,7 +5,7 @@ from .views import home,cat_figuras,cat_poleras,cat_accesorios,\
     agregar_producto,listar_productos,modificar_producto,detalle_producto,eliminar_producto,\
     home_adm,listar_anime,agregar_anime,listar_marca,agregar_marca,listar_serie,agregar_serie,\
     register,listar_cliente,agregar_cliente,modificar_cliente,detalle_cliente,eliminar_cliente,exit,verproducto,\
-    perfil
+    perfil,carrito
 
 urlpatterns = [
     path('', home, name='home'),
@@ -13,7 +13,10 @@ urlpatterns = [
     path('catalogo_poleras', cat_poleras, name='catalogo_poleras'),
     path('catalogo_accesorios', cat_accesorios, name='catalogo_accesorios'),
     path('perfil/<id>/', perfil, name='perfil'),
+    path('carrito/', carrito, name='carrito'),
+    # URLS CARRITO
     
+    # FIN URLS FUNCIONES CARRITO
     path('verproducto/<id>', verproducto, name='verproducto'),
     # URLS VISTA ADMIN
     path('vista-amd/', home_adm, name='vista-adm'),
