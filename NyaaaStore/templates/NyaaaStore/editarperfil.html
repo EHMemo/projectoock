@@ -3,6 +3,28 @@
 
 {% block Contenido %}
 
+{% load crispy_forms_tags %}
+    <div class="container">
+        <br>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-12 col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h2>Editar perfil</h2>
+                        <hr>
+                        <form action="" method="post">
 
+                            {% csrf_token %}
+                            {{ form | crispy }} 
+                            <input type="submit" value="Guardar" class="btn btn-success float-end">
+                        </form>
+                        <a href="{% url "perfil" user.username%}">Volver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock Contenido %}

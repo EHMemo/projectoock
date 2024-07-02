@@ -85,7 +85,20 @@ def perfil(request, username):
 
 def editar_perfil(request):
 
-    return render(request, 'NyaaaStore/editarperfil.html')
+    data = {
+        'form':UpdateUserPerfilForm()
+    }
+
+    if request.method=="POST":
+        formulario=UpdateUserPerfilForm(data=request.POST)
+        if formulario.is_valid():
+            formulario.save()
+            messages.success(request, "Perfil modificado")
+            return redirect(to="perfil")
+        else:
+            data["form"]=formulario
+
+    return render(request, 'NyaaaStore/editarperfil.html', data)
 
 # FUNCIONES CARRITO
 
