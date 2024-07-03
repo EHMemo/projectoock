@@ -50,6 +50,9 @@ class UserPerfil(models.Model):
     city=models.CharField(max_length=15, choices=CIUDAD, null=False)
     direccion=models.CharField(max_length=200, null=False)
 
+    def str(self):
+        return self.usuario.username
+
 # MODELO CARRITO 
 
 class CartItem(models.Model):

@@ -10,9 +10,9 @@
 
 <main>
     <!-- Contenedor de las cartas -->
-{% for p in productos %}
 <div class="product-grid">
 <!-- Carta 1 -->
+{% for p in productos %}
 <div class="product-card">
     <a href="{% url "verproducto" p.id %}">
         <img src="{{ p.foto.url }}" alt="producto">
@@ -24,9 +24,9 @@
         </a>
     </a>
 </div>
-
-</div>
 {% endfor %}
+</div>
+
 </main>
 
 {% endblock Contenido %}

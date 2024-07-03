@@ -29,12 +29,6 @@ class UserForm(UserCreationForm):
         model=User
         fields=['username','first_name','last_name','email','password1','password2']
 
-class UserPerfilForm(forms.ModelForm):
-
-    class Meta:
-        model=UserPerfil
-        fields=['fono','city','direccion']
-
 class UpdateUserPerfilForm(forms.ModelForm):
 
     class Meta:

@@ -10,21 +10,23 @@
 
 <main>
     <!-- Contenedor de las cartas -->
-{% comment %} {% for p in productos %} {% endcomment %}
 <div class="product-grid">
 <!-- Carta 1 -->
+{% for p in productos %}
 <div class="product-card">
-    <a href="https://url-del-producto-1.com">
+    <a href="{% url "verproducto" p.id %}">
         <img src="{{ p.foto.url }}" alt="producto">
-        <h2>{{ p.nombre | title }}</h2>
-        <p>${{ p.precio | intcomma }}</p>
+        <h2>{{ p.nombre }}</h2>
+        <p>${{ p.precio }}</p>
         <p>ID: {{ p.id }}</p>
+        <a href="{% url 'add_to_cart' p.id %}">
         <button class="product-button">Agregar al carro</button>
+        </a>
     </a>
 </div>
-
+{% endfor %}
 </div>
-{% comment %} {% endfor %} {% endcomment %}
+
 </main>
 
 {% endblock Contenido %}

@@ -21,17 +21,30 @@ def home(request):
 
 def cat_figuras(request):
     
-    productos=Producto.objects.all() #queryset
+    productos = Producto.objects.filter(tp_producto='FIGURA')
     datos = {
-        'productos' : productos
+        'productos': productos
     }
+
     return render(request, 'NyaaaStore/catalogo_figuras.html', datos)
 
 def cat_poleras(request):
-    return render(request, 'NyaaaStore/catalogo_poleras.html')
+
+    productos = Producto.objects.filter(tp_producto='POLERA')
+    datos = {
+        'productos': productos
+    }
+
+    return render(request, 'NyaaaStore/catalogo_poleras.html', datos)
 
 def cat_accesorios(request):
-    return render(request, 'NyaaaStore/catalogo_accesorios.html')
+
+    productos = Producto.objects.filter(tp_producto='ACCESORIO')
+    datos = {
+        'productos': productos
+    }
+
+    return render(request, 'NyaaaStore/catalogo_accesorios.html', datos)
 
 def register(request):
 
@@ -74,31 +87,39 @@ def carrito(request):
 def perfil(request, username):
 
     usuario=get_object_or_404(User, username=username)
+    """ perfil = get_object_or_404(UserPerfil, usuario=usuario) """
     historial_compras = Venta.objects.filter(usuario=usuario).order_by('-fecha')
 
     datos={
         'usuario':usuario,
+        'perfil': perfil,
         'historial_compras': historial_compras,
     }
 
     return render(request, 'NyaaaStore/perfil.html', datos)
 
-def editar_perfil(request):
+def editar_perfil(request, username):
 
-    data = {
-        'form':UpdateUserPerfilForm()
+    usuario = get_object_or_404(User, username=username)
+    perfil = get_object_or_404(UserPerfil, usuario=usuario)
+
+    if request.user != usuario:
+        return redirect('perfil', username=username)
+
+    if request.method == 'POST':
+        form = UpdateUserPerfilForm(request.POST, instance=perfil)
+        if form.is_valid():
+            form.save()
+            return redirect('perfil', username=usuario.username)
+    else:
+        form = UpdateUserPerfilForm(instance=perfil)
+
+    datos = {
+        'form': form,
+        'usuario': usuario,
     }
 
-    if request.method=="POST":
-        formulario=UpdateUserPerfilForm(data=request.POST)
-        if formulario.is_valid():
-            formulario.save()
-            messages.success(request, "Perfil modificado")
-            return redirect(to="perfil")
-        else:
-            data["form"]=formulario
-
-    return render(request, 'NyaaaStore/editarperfil.html', data)
+    return render(request, 'NyaaaStore/editarperfil.html', datos)
 
 # FUNCIONES CARRITO
 
@@ -187,6 +208,27 @@ def process_payment(request):
 def home_adm(request):
 
     return render(request, 'NyaaaStore/vistaadm/home-adm.html')
+
+def ventas(request):
+
+    ventas = Venta.objects.all().order_by('-fecha')
+
+    if request.method == 'POST':
+        venta_id = request.POST.get('venta_id')
+        venta = get_object_or_404(Venta, id=venta_id)
+        form = EstadoVentaForm(request.POST, instance=venta)
+        if form.is_valid():
+            form.save()
+            return redirect('vistaVentas')
+    else:
+        form = EstadoVentaForm()
+
+    datos={
+        'ventas': ventas,
+        'form': form
+    }
+
+    return render(request, 'NyaaaStore/Ventas.html', datos)
 
 # FORMULARIO ANIME
 
