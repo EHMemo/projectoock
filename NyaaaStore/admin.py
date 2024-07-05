@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Anime,Marca,Serie,Producto
+from .models import Anime,Marca,Serie,Producto,Venta
 
 # En la tabla de la DB muestra por categoria los datos
 class AdmMarca(admin.ModelAdmin):
