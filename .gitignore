@@ -1,5 +1,3 @@
-NyaaaStore/__pycache__/
-sitio/__pycache__/
-NyaaaStore/migrations/__pycache__
-NyaaaStore/media/*
+NyaaaStore/__pycache__
+sitio/__pycache__
 db.sqlite3
