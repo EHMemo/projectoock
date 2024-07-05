@@ -33,6 +33,8 @@
 {% block Contenido-adm %}
 
 <main>
+    <br/>
+    <br/>
     <!-- Codigo para la tabla que muestra los usuarios -->
     <div class="tabla">
         <div class="titulo">
@@ -41,11 +43,12 @@
             <a href="{% url "agregar_producto" %}" role="button" class="btn">+Agregar Producto</a>
             {% endif %}
         </div>
+        <br/>
+        <caption>
+            Productos
+            <span class="table-row-count"></span>
+        </caption>
         <table>
-            <caption>
-                Productos
-                <span class="table-row-count"></span>
-            </caption>
             <thead>
                 <tr>
                     <th>IMAGEN</th>

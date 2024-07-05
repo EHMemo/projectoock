@@ -5,7 +5,7 @@ from .views import home,cat_figuras,cat_poleras,cat_accesorios,\
     agregar_producto,listar_productos,modificar_producto,detalle_producto,eliminar_producto,\
     home_adm,listar_anime,agregar_anime,listar_marca,agregar_marca,listar_serie,agregar_serie,\
     register,listar_cliente,agregar_cliente,modificar_cliente,detalle_cliente,eliminar_cliente,exit,verproducto,\
-    perfil,carrito,add_to_cart,update_cart_item,remove_from_cart,process_payment,editar_perfil,ventas
+    perfil,carrito,add_to_cart,update_cart_item,remove_from_cart,process_payment,editar_perfil,ventas,editar_contacto
 
 urlpatterns = [
     path('', home, name='home'),
@@ -13,7 +13,8 @@ urlpatterns = [
     path('catalogo_poleras', cat_poleras, name='catalogo_poleras'),
     path('catalogo_accesorios', cat_accesorios, name='catalogo_accesorios'),
     path('perfil/<str:username>', perfil, name='perfil'),
-    path('perfil/<str:username>/', editar_perfil, name='editarperfil'),
+    path('editar', editar_perfil, name='editarperfil'),
+    path('contacto', editar_contacto, name='contacto'),
     path('carrito/', carrito, name='carrito'),
     # URLS CARRITO
     path('add/<int:producto_id>/', add_to_cart, name='add_to_cart'),

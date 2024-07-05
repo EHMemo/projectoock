@@ -29,8 +29,21 @@ class UserForm(UserCreationForm):
         model=User
         fields=['username','first_name','last_name','email','password1','password2']
 
-class UpdateUserPerfilForm(forms.ModelForm):
+class UptadeUserForm(forms.ModelForm):
+    username=forms.CharField(min_length=5,max_length=50)
+    first_name=forms.CharField(min_length=3, max_length=50)
+    last_name=forms.CharField(min_length=4, max_length=50)
 
+    class Meta:
+        model=User
+        fields=['username','first_name','last_name','email']
+
+
+class ContactoForm(forms.ModelForm):
+
+    #fono=forms.IntegerField()
+    direccion=forms.CharField(min_length=5, max_length=100)
+    
     class Meta:
         model=UserPerfil
         fields=['fono','city','direccion']

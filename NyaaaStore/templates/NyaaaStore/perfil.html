@@ -11,7 +11,7 @@
                     <div class="card-body text-center">
                         <h5 class="my-3">{{ user.username }}</h5>
                         <div class="d-flex justify-content-center mb-2">
-                            <a href="{% comment %} {% url "editarperfil" %} {% endcomment %}" class="btn btn-primary" >Editar Perfil</a>
+                            <a href="{% url "editarperfil" %}" class="btn btn-primary" >Editar Perfil</a> 
                         </div>
                     </div>
                 </div>
@@ -42,7 +42,7 @@
                                 <p class="mb-0">Telefono</p>
                             </div>
                             <div class="col-sm-9">
-                                <p class="text-muted mb-0">#</p>
+                                <p class="text-muted mb-0">{{perfil_usuario.fono}}</p>
                             </div>
                         </div>
                         <hr>
@@ -51,7 +51,7 @@
                                 <p class="mb-0">Ciudad</p>
                             </div>
                             <div class="col-sm-9">
-                                <p class="text-muted mb-0">#</p>
+                                <p class="text-muted mb-0">{{perfil_usuario.city}}</p>
                             </div>
                         </div>
                         <hr>
@@ -60,7 +60,13 @@
                                 <p class="mb-0">Direccion</p>
                             </div>
                             <div class="col-sm-9">
-                                <p class="text-muted mb-0">#</p>
+                                <p class="text-muted mb-0">{{perfil_usuario.direccion}}</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <a class="btn btn-info " href="{% url "contacto" %}">Editar Contacto</a>
                             </div>
                         </div>
                     </div>

@@ -45,7 +45,7 @@ class Producto(models.Model):
 
 # MODELO PERFIL
 class UserPerfil(models.Model):
-    usuario=models.OneToOneField(User, related_name='usuario', on_delete=models.CASCADE)
+    usuario=models.OneToOneField(User, related_name='userperfil', on_delete=models.CASCADE)
     fono=models.CharField(max_length=9, null=False)
     city=models.CharField(max_length=15, choices=CIUDAD, null=False)
     direccion=models.CharField(max_length=200, null=False)

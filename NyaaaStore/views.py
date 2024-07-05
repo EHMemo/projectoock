@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from os import remove, path
 from django.conf import settings
 from django.utils import timezone
-from django.db.models import Q
+from django.urls import reverse
 
 # Create your views here.
 
@@ -87,39 +87,46 @@ def carrito(request):
 def perfil(request, username):
 
     usuario=get_object_or_404(User, username=username)
-    """ perfil = get_object_or_404(UserPerfil, usuario=usuario) """
     historial_compras = Venta.objects.filter(usuario=usuario).order_by('-fecha')
+    perfil_usuario = get_object_or_404(UserPerfil, usuario=usuario)
 
     datos={
         'usuario':usuario,
-        'perfil': perfil,
         'historial_compras': historial_compras,
+        'perfil_usuario': perfil_usuario,
     }
 
     return render(request, 'NyaaaStore/perfil.html', datos)
 
-def editar_perfil(request, username):
-
-    usuario = get_object_or_404(User, username=username)
-    perfil = get_object_or_404(UserPerfil, usuario=usuario)
-
-    if request.user != usuario:
-        return redirect('perfil', username=username)
+@login_required
+def editar_perfil(request):
 
     if request.method == 'POST':
-        form = UpdateUserPerfilForm(request.POST, instance=perfil)
+        form = UptadeUserForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('perfil', username=usuario.username)
+            messages.success(request, 'Tu perfil ha sido actualizado exitosamente.')
+            return redirect(reverse('perfil', args=[request.user.username]))
     else:
-        form = UpdateUserPerfilForm(instance=perfil)
+        form = UptadeUserForm(instance=request.user)
 
-    datos = {
-        'form': form,
-        'usuario': usuario,
-    }
+    return render(request, 'NyaaaStore/editarperfil.html', {'form': form})
 
-    return render(request, 'NyaaaStore/editarperfil.html', datos)
+@login_required
+def editar_contacto(request):
+
+    usuario_profile, created = UserPerfil.objects.get_or_create(usuario=request.user)
+    
+    if request.method == 'POST':
+        form = ContactoForm(request.POST, instance=usuario_profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Tus datos de contacto han sido actualizados exitosamente.')
+            return redirect(reverse('perfil', args=[request.user.username]))
+    else:
+        form = ContactoForm(instance=usuario_profile)
+
+    return render(request, 'NyaaaStore/contacto.html', {'form': form})
 
 # FUNCIONES CARRITO
 
@@ -239,7 +246,7 @@ def listar_anime(request):
     page=request.GET.get('page',1)
 
     try:
-        paginator=Paginator(anime, 7)
+        paginator=Paginator(anime, 5)
         anime=paginator.page(page)
     except:
         raise Http404
@@ -280,7 +287,7 @@ def listar_marca(request):
     page=request.GET.get('page',1)
 
     try:
-        paginator=Paginator(marca, 7)
+        paginator=Paginator(marca, 5)
         marca=paginator.page(page)
     except:
         raise Http404
@@ -321,7 +328,7 @@ def listar_serie(request):
     page=request.GET.get('page',1)
 
     try:
-        paginator=Paginator(serie, 7)
+        paginator=Paginator(serie, 5)
         serie=paginator.page(page)
     except:
         raise Http404
@@ -381,7 +388,7 @@ def listar_productos(request):
     page=request.GET.get('page', 1)
 
     try:
-        paginator=Paginator(productos, 7)
+        paginator=Paginator(productos, 5)
         productos=paginator.page(page)
     except:
         raise Http404
@@ -447,11 +454,13 @@ def eliminar_producto(request,id):
 @permission_required('NyaaaStore.view_user')
 def listar_cliente(request):
 
-    usuarios = User.objects.exclude(is_superuser=True)
+    #usuarios = User.objects.exclude(is_superuser=True)
+    usuarios = User.objects.exclude(is_superuser=True).select_related('userperfil')
     page = request.GET.get('page', 1)
+    
 
     try:
-        paginator = Paginator(usuarios, 7)
+        paginator = Paginator(usuarios, 5)
         usuarios = paginator.page(page)
     except:
         raise Http404
@@ -498,13 +507,13 @@ def modificar_cliente(request, id):
     perfil_usuario=get_object_or_404(UserPerfil, usuario=usuario)
 
     if request.method=="POST":
-        form=UpdateUserPerfilForm(request.POST, isinstance=perfil_usuario)
+        form=UptadeUserForm(request.POST, isinstance=perfil_usuario)
         if form.is_valid():
             form.save()
             messages.warning(request, "Cliente modificado")
             return redirect(to='listar_cliente')
         else:
-            form=UpdateUserPerfilForm(isinstance=perfil_usuario)
+            form=UptadeUserForm(isinstance=perfil_usuario)
 
         datos={
             'form':form
