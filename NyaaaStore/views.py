@@ -216,6 +216,8 @@ def home_adm(request):
 
     return render(request, 'NyaaaStore/vistaadm/home-adm.html')
 
+@permission_required('NyaaaStore.view_venta')
+@login_required
 def ventas(request):
 
     ventas = Venta.objects.all().order_by('-fecha')
@@ -502,22 +504,25 @@ def detalle_cliente(request, id):
 
 @permission_required('NyaaaStore.change_user')
 def modificar_cliente(request, id):
-
     usuario = get_object_or_404(User, id=id)
-    perfil_usuario=get_object_or_404(UserPerfil, usuario=usuario)
+    perfil_usuario = get_object_or_404(UserPerfil, usuario=usuario)
 
-    if request.method=="POST":
-        form=UptadeUserForm(request.POST, isinstance=perfil_usuario)
-        if form.is_valid():
-            form.save()
-            messages.warning(request, "Cliente modificado")
-            return redirect(to='listar_cliente')
-        else:
-            form=UptadeUserForm(isinstance=perfil_usuario)
+    if request.method == "POST":
+        user_form = UptadeUserForm(request.POST, instance=usuario)
+        contacto_form = ContactoForm(request.POST, instance=perfil_usuario)
+        if user_form.is_valid() and contacto_form.is_valid():
+            user_form.save()
+            contacto_form.save()
+            messages.success(request, "Cliente modificado")
+            return redirect('listar_cliente')
+    else:
+        user_form = UptadeUserForm(instance=usuario)
+        contacto_form = ContactoForm(instance=perfil_usuario)
 
-        datos={
-            'form':form
-        }
+    datos = {
+        'user_form': user_form,
+        'contacto_form': contacto_form
+    }
 
     return render(request, 'NyaaaStore/cliente/modificar.html', datos)
 

@@ -18,7 +18,8 @@
                     <form action="" method="post" enctype="multipart/form-data">
 
                         {% csrf_token %}
-                        {{form | crispy}}
+                        {{user_form | crispy}}
+                        {{contacto_form | crispy}}
 
                         <div class="d-flex justify-content-end">
                             <a href="{% url "listar_cliente" %}" class="btn btn-secondary">Cancelar</a>
