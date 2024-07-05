@@ -5,7 +5,8 @@ from .views import home,cat_figuras,cat_poleras,cat_accesorios,\
     agregar_producto,listar_productos,modificar_producto,detalle_producto,eliminar_producto,\
     home_adm,listar_anime,agregar_anime,listar_marca,agregar_marca,listar_serie,agregar_serie,\
     register,listar_cliente,agregar_cliente,modificar_cliente,detalle_cliente,eliminar_cliente,exit,verproducto,\
-    perfil,carrito,add_to_cart,update_cart_item,remove_from_cart,process_payment,editar_perfil,ventas,editar_contacto
+    perfil,carrito,add_to_cart,update_cart_item,remove_from_cart,process_payment,editar_perfil,ventas,editar_contacto,\
+    eliminar_anime,eliminar_marca,eliminar_serie
 
 urlpatterns = [
     path('', home, name='home'),
@@ -15,7 +16,7 @@ urlpatterns = [
     path('perfil/<str:username>', perfil, name='perfil'),
     path('editar', editar_perfil, name='editarperfil'),
     path('contacto', editar_contacto, name='contacto'),
-    path('carrito/', carrito, name='carrito'),
+    path('carrito/', carrito, name='cart'),
     # URLS CARRITO
     path('add/<int:producto_id>/', add_to_cart, name='add_to_cart'),
     path('update/<int:item_id>/', update_cart_item, name='update_cart_item'),
@@ -30,14 +31,17 @@ urlpatterns = [
     # URLS FORMULARIO ANIME
     path('listar-anime/', listar_anime, name='listar_anime'),
     path('agregar-anime/', agregar_anime, name='agregar_anime'),
+    path('eliminar-anime/<id>', eliminar_anime, name='eliminar_anime'),
     # FIN URLS FORMULARIO ANIME
     # URLS FORMULARIO MARCA
     path('listar-marca/', listar_marca, name='listar_marca'),
     path('agregar-marca/', agregar_marca, name='agregar_marca'),
+    path('eliminar-marca/<id>', eliminar_marca, name='eliminar_marca'),
     # FIN URLS FORMULARIO MARCA
     # URLS FORMULARIO SERIE
     path('listar-serie/', listar_serie, name='listar_serie'),
     path('agregar-serie/', agregar_serie, name='agregar_serie'),
+    path('eliminar-serie/<id>', eliminar_serie, name='eliminar_serie'),
     # FIN URLS FORMULARIO SERIE
     # URLS CRUD PRODUCTO DESDE ADMIN
     path('agregar-producto/', agregar_producto, name='agregar_producto'),

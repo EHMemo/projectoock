@@ -12,19 +12,19 @@
     <!-- Latest compiled JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/9ecdaac0bf.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {% block css %}
     
     {% endblock css %}
-    {% block js %}
-    
-    {% endblock js %}
+
+
 </head>
 
 <body>
     <nav class="navbar navbar-expand-md p-3" style="background-color: #A9A9A9;">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="{% url "home" %}">
-                <img src="#" alt="" width="30" height="24">
+                <img src="{% static "NyaaaStore/img/Logo.png" %}" alt="" width="75px" height="70px">
                 <h4 class="text-white" style="margin: 0;">NyaaaStore</h4>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -73,7 +73,7 @@
                     {% endif %}
                     <div class="icons">
                         <div class="user-icon d-flex me-5 pt-2">
-                            <a href="{% url "carrito" %}">
+                            <a href="{% url "cart" %}">
                                 <div class="cart"><i class="fa-solid fa-cart-shopping" style="color: black;"></i></div>
                             </a>
                         </div>
@@ -82,6 +82,7 @@
             </div>
         </div>
     </nav>
+
 
     {% block Contenido %}
     

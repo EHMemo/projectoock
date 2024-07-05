@@ -11,13 +11,17 @@ from os import remove, path
 from django.conf import settings
 from django.utils import timezone
 from django.urls import reverse
+import random
+
 
 # Create your views here.
 
 # VIEWS PAGINA BASE
 
 def home(request):
-    return render(request, 'NyaaaStore/home.html')
+    productos = list(Producto.objects.all())
+    random.shuffle(productos)
+    return render(request, 'NyaaaStore/home.html', {'productos': productos})
 
 def cat_figuras(request):
     
@@ -81,7 +85,7 @@ def exit(request):
 @login_required
 def carrito(request):
     cart, created = Cart.objects.get_or_create(usuario=request.user)
-    return render(request, 'NyaaaStore/carrito.html', {'cart': cart})
+    return render(request, 'NyaaaStore/cart.html', {'cart': cart})
 
 @login_required
 def perfil(request, username):
@@ -143,7 +147,7 @@ def add_to_cart(request, producto_id):
     cart.items.add(cart_item)
     messages.success(request, f'{producto.nombre} fue añadido a tu carrito.')
 
-    return redirect('carrito')
+    return redirect('cart')
 
 @login_required
 def update_cart_item(request, item_id):
@@ -153,27 +157,27 @@ def update_cart_item(request, item_id):
         cart_item.cantidad = cantidad
         cart_item.save()
         messages.success(request, 'La cantidad fue actualizada.')
-    return redirect('carrito')
+    return redirect('cart')
 
 @login_required
 def remove_from_cart(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id)
     cart_item.delete()
     messages.success(request, 'El ítem fue eliminado del carrito.')
-    return redirect('carrito')
+    return redirect('cart')
 
 @login_required
 def process_payment(request):
     cart, created = Cart.objects.get_or_create(usuario=request.user)
     if not cart.items.exists():
         messages.error(request, 'No tienes artículos en tu carrito.')
-        return redirect('carrito')
+        return redirect('cart')
 
     for item in cart.items.all():
         producto = item.producto
         if item.cantidad > producto.stock:
             messages.error(request, f'No hay suficiente stock para {producto.nombre}.')
-            return redirect('carrito')
+            return redirect('cart')
         
         Venta.objects.create(
                 usuario=request.user,
@@ -191,7 +195,7 @@ def process_payment(request):
     cart.items.clear()
     
     messages.success(request, 'Pago realizado con éxito. Gracias por tu compra.')
-    return redirect('carrito')
+    return redirect('cart')
 
 # FIN FUNCIONES CARRITO
 # FIN VIEWS PAGINA BASE
@@ -278,6 +282,12 @@ def agregar_anime(request):
 
     return render(request, 'NyaaaStore/anime/agregar.html', datos)
 
+@permission_required('NyaaaStore.delete_anime')
+def eliminar_anime(request, id=id):
+    anime = get_object_or_404(Anime, id=id)
+    anime.delete()
+    return redirect(to=listar_anime)
+
 # FIN FORMULARIO ANIME
 
 # FORMULARIO MARCA
@@ -319,11 +329,18 @@ def agregar_marca(request):
 
     return render(request, 'NyaaaStore/marca/agregar.html', datos)
 
+@permission_required('NyaaaStore.delete_marca')
+def eliminar_marca(request, id=id):
+    marca = get_object_or_404(Marca, id=id)
+    marca.delete()
+    messages.warning(request, "Marca eliminada")
+    return redirect(to=listar_marca)
+
 # FIN FORMULARIO MARCA
 
 # FORMULARIO SERIE
 
-@permission_required('NyaaaStore.view_anime')
+@permission_required('NyaaaStore.view_serie')
 def listar_serie(request):
 
     serie=Serie.objects.all()
@@ -341,7 +358,8 @@ def listar_serie(request):
     }
 
     return render(request, 'NyaaaStore/serie/listar.html', datos)
-@permission_required('NyaaaStore.add_anime')
+
+@permission_required('NyaaaStore.add_serie')
 def agregar_serie(request):
 
     datos={
@@ -358,6 +376,13 @@ def agregar_serie(request):
             datos["form"]=formulario
 
     return render(request, 'NyaaaStore/serie/agregar.html', datos)
+
+@permission_required('NyaaaStore.delete_serie')
+def eliminar_serie(request, id=id):
+    serie = get_object_or_404(Serie, id=id)
+    serie.delete()
+    
+    return redirect(to=listar_serie)
 
 # FIN FORMULARIO SERIE
 

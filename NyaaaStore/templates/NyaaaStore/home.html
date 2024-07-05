@@ -1,34 +1,33 @@
 {% extends "NyaaaStore/base.html" %}
 {% load static %}
 
+{% block css %}
+<link rel="stylesheet" href="{% static "NyaaaStore/css/catalogo.css" %}">
+{% endblock css %}
 
-    {% block Contenido %}
-    <!-- Products -->
-    <section>
-        <div class="container my-5">
-            <header class="mb-4">
-                <h3>New products</h3>
-            </header>
-            {% for p in productos %}
-            <div class="row">
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card my-2 shadow-0">
-                        <a href="#" class="img-wrap">
-                            <img src="{{ p.foto.url }}"
-                                class="card-img-top" style="aspect-ratio: 1 / 1">
-                        </a>
-                        <div class="card-body p-0 pt-2">
-                            <h5 class="card-title">${{ p.precio }}</h5>
-                            <p class="card-text mb-0">{{ p.nombre }}</p>
-                            <p class="text-muted">
-                                ID: {{ p.id }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </section>
-    <!-- Products -->
-    {% endblock Contenido %}
+{% block Contenido %}
+
+{% load humanize %}
+
+<main>
+    <!-- Contenedor de las cartas -->
+<div class="product-grid">
+<!-- Carta 1 -->
+{% for p in productos %}
+<div class="product-card">
+    <a href="{% url "verproducto" p.id %}">
+        <img src="{{ p.foto.url }}" alt="producto">
+        <h2>{{ p.nombre }}</h2>
+        <p>${{ p.precio }}</p>
+        <p>ID: {{ p.id }}</p>
+        <a href="{% url 'add_to_cart' p.id %}">
+        <button class="product-button">Agregar al carro</button>
+        </a>
+    </a>
+</div>
+{% endfor %}
+</div>
+
+</main>
+
+{% endblock Contenido %}

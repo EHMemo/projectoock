@@ -5,6 +5,28 @@
 <link rel="stylesheet" href="{% static "NyaaaStore/css/tabla.css" %}">
 {% endblock css %}
 
+{% block js %}
+<script>
+    function eliminarMarca(id) {
+        Swal.fire({
+            "title":"Estas seguro?",
+            "text":"NO PODRAS VOLVER ATRAS",
+            "icon":"question",
+            "showCancelButton":true,
+            "cancelButtonText":"Cancelar",
+            "confirmButtonText":"Erai",
+            "reverseButtons":true
+        })
+        .then(function(result) {
+            if(result.isConfirmed) {
+                window.location.href = "/eliminar-marca/"+id"/"
+            }
+        })
+    }
+</script>
+{% endblock js %}
+
+
 {% block Contenido-adm %}
 
 <main>
@@ -31,7 +53,7 @@
                 <tr>
                     <td>{{m.id}}</td>
                     <td>{{m.nombre}}</td>
-                    <td><a href="#" role="button" class="btn btn-danger text-light">Eliminar</a></td>
+                    <td><a href="{% url "eliminar_marca" m.id %}" onclick="eliminarMarca({{m.id}})" class="btn btn-danger text-light">Eliminar</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

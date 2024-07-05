@@ -33,7 +33,7 @@
                     <td>{{s.id}}</td>
                     <td>{{s.nombre}}</td>
                     <td>{{s.marca}}</td>
-                    <td><a href="#" role="button" class="btn btn-danger text-light">Eliminar</a></td>
+                    <td><a href="{% url "eliminar_serie" s.id %}" role="button" class="btn btn-danger text-light">Eliminar</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
