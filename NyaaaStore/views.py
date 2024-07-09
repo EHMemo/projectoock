@@ -228,20 +228,26 @@ def ventas(request):
 
     if request.method == 'POST':
         venta_id = request.POST.get('venta_id')
-        venta = get_object_or_404(Venta, id=venta_id)
-        form = EstadoVentaForm(request.POST, instance=venta)
-        if form.is_valid():
-            form.save()
-            return redirect('vistaVentas')
+        if venta_id and venta_id.isdigit():
+            venta = get_object_or_404(Venta, id=int(venta_id))
+            estado = request.POST.get('estado')
+            if estado in ['EN PREPARACIÓN', 'PREPARADO', 'ENVIADO', 'ENTREGADO', 'CANCELADO']:
+                venta.estado = estado
+                venta.save()
+                return redirect('ventas')
+        else:
+            # Maneja el caso donde venta_id no es válido
+            form = EstadoVentaForm()
+            # Podrías agregar un mensaje de error aquí
     else:
         form = EstadoVentaForm()
 
-    datos={
+    datos = {
         'ventas': ventas,
         'form': form
     }
 
-    return render(request, 'NyaaaStore/Ventas.html', datos)
+    return render(request, 'NyaaaStore/ventas.html', datos)
 
 # FORMULARIO ANIME
 

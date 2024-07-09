@@ -31,10 +31,10 @@
                     <td>{% if venta.usuario %}{{ venta.usuario.email }}{% else %}N/A{% endif %}</td>
                     <td>
                         <form method="post" action="">
-
-                            <input type="hidden" name="venta_id" value="venta_id">
+                            {% csrf_token %}
+                            <input type="hidden" name="venta_id" value="{{ venta.id }}">
                             <select name="estado" onchange="this.form.submit()">
-                                <option value="EN PREPARACIÓN" {% if venta.estado == 'EN PREPRACIÓN' %}selected{% endif %}>EN PREPARACIÓN</option>
+                                <option value="EN PREPARACIÓN" {% if venta.estado == 'EN PREPARACIÓN' %}selected{% endif %}>EN PREPARACIÓN</option>
                                 <option value="PREPARADO" {% if venta.estado == 'PREPARADO' %}selected{% endif %}>PREPARADO</option>
                                 <option value="ENVIADO" {% if venta.estado == 'ENVIADO' %}selected{% endif %}>ENVIADO</option>
                                 <option value="ENTREGADO" {% if venta.estado == 'ENTREGADO' %}selected{% endif %}>ENTREGADO</option>
